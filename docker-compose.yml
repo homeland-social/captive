@@ -1,0 +1,32 @@
+version: "3.7"
+
+volumes:
+  db:
+
+networks:
+  shared:
+    external:
+      name: shared
+  private:
+
+services:
+
+  net:
+    image: console/net
+    build:
+      dockerfile: ./docker/net/Dockerfile
+      context: ./
+    privileged: true
+    network_mode: host
+    volumes:
+      - /tmp/wpa_sock:/var/run/sockets
+      - ./docker/net/entrypoint.sh:/entrypoint.sh:ro
+      - ./docker/net/wpa_supplicant.conf.tmpl:/etc/wpa_supplicant/wpa_supplicant.conf.tmpl
+      - ./docker/net/nodogsplash.conf.tmpl:/etc/nodogsplash/nodogsplash.conf.tmpl
+    environment:
+      - WPA_SOCKET_PATH=/var/run/sockets/wpa_supplicant
+      - NDS_SOCKET_PATH=/var/run/sockets/nds
+      - INTERFACE=wlx1cbfce6bc882
+      - ADDRESS=192.168.102.254
+      - DHCP_RANGE=192.168.102.100,192.168.102.150,1h
+
